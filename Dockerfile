@@ -50,6 +50,10 @@ COPY . .
 # Install the UploadThing Node helper's dependencies (package.json).
 RUN npm install --omit=dev --no-audit --no-fund
 
+# Repos pushed from Windows can strip the executable bit and add CRLF to bin/ scripts.
+# Normalize line endings and restore +x so ./bin/rails etc. run in the build and at boot.
+RUN sed -i 's/\r$//' bin/* 2>/dev/null || true; chmod +x bin/*
+
 # Precompile bootsnap code for faster boot times.
 # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
