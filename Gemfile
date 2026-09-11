@@ -65,4 +65,4 @@ group :development, :test do
   gem "factory_bot_rails"  # test data
 end
 
-gem "json", "~> 2.7"
+gem "json", "~> 3.0"
