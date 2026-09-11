@@ -7,6 +7,13 @@ Rails.application.routes.draw do
   # The HUD "setting up your dashboard" interstitial shown right after sign-up.
   get "setting-up", to: "pages#setting_up", as: :setting_up
 
+  # Marketing pages (Phase 10).
+  get "about",    to: "pages#about",      as: :about
+  get "why-join", to: "pages#membership", as: :membership
+
+  # Blog (static content — see app/models/article.rb).
+  resources :articles, only: [:index, :show], path: "blog"
+
   # Public job board.
   resources :jobs, only: [:index, :show]
 

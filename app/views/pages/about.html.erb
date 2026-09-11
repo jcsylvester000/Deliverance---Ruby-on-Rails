@@ -1,0 +1,105 @@
+<% content_for :title, "About — Deliverance" %>
+
+<div data-controller="reveal">
+
+  <%# Hero %>
+  <section class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 px-6 py-16 sm:px-12">
+    <div class="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-cyan-500/15 blur-3xl blobby"></div>
+    <div class="pointer-events-none absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-indigo-500/15 blur-3xl floaty-slow"></div>
+    <div class="relative max-w-2xl">
+      <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-cyan-300">About us</p>
+      <h1 class="font-display text-4xl font-bold leading-tight sm:text-6xl">We help good work<br><span class="gradient-text">find good people.</span></h1>
+      <p class="mt-5 max-w-xl text-lg text-slate-300">
+        Deliverance is a job board and hiring pipeline in one — built on the belief that hiring and
+        job-hunting should feel calm, transparent, and fast for both sides.
+      </p>
+    </div>
+  </section>
+
+  <%# Mission + image %>
+  <section class="mt-12 grid items-center gap-8 lg:grid-cols-2">
+    <div data-reveal class="overflow-hidden rounded-3xl border border-white/10">
+      <%= photo_tag "1522071820081-009f0129c71c", seed: "about-mission", alt: "A team working together",
+            width: 1200, height: 800, class: "h-full w-full object-cover" %>
+    </div>
+    <div data-reveal>
+      <h2 class="font-display text-3xl font-bold">Our mission</h2>
+      <p class="mt-4 text-slate-300">
+        Most hiring tools optimize for the company and leave applicants in the dark. Most job boards
+        optimize for volume and leave posters drowning. We think the two problems are the same problem —
+        so we built one place that serves both.
+      </p>
+      <p class="mt-4 text-slate-400">
+        Post a role, and every applicant becomes a card you can move through a pipeline. Apply to a role,
+        and you can watch it progress in real time. No silence, no spreadsheets, no guesswork.
+      </p>
+    </div>
+  </section>
+
+  <%# Stats %>
+  <section class="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4" data-reveal>
+    <% [["members joined", 1200, "+"], ["roles filled", 340, "+"], ["cities", 60, "+"], ["would recommend", 98, "%"]].each do |label, to, suffix| %>
+      <div class="hover-lift rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
+        <div class="font-display text-4xl font-bold">
+          <span data-controller="countup" data-countup-to-value="<%= to %>" data-countup-suffix-value="<%= suffix %>">0<%= suffix %></span>
+        </div>
+        <p class="mt-1 text-sm text-slate-400"><%= label %></p>
+      </div>
+    <% end %>
+  </section>
+
+  <%# Values %>
+  <section class="mt-16" data-reveal>
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="font-display text-3xl font-bold">What we believe</h2>
+    </div>
+    <div class="mt-10 grid gap-6 md:grid-cols-3">
+      <% [
+           ["🔎", "Transparency by default", "You should always know where you stand — whether you're hiring or being hired."],
+           ["⚡", "Speed without spam", "Fast to post, fast to apply, and an accept-only inbox that stays quiet until it matters."],
+           ["🤝", "Both sides matter", "Every feature is judged by whether it helps posters and applicants alike."]
+         ].each_with_index do |(icon, title, body), i| %>
+        <div data-reveal style="transition-delay: <%= i * 90 %>ms" class="hover-lift card-sheen rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.07] to-white/[0.02] p-6">
+          <span class="text-3xl"><%= icon %></span>
+          <h3 class="mt-4 font-display text-lg font-semibold"><%= title %></h3>
+          <p class="mt-2 text-sm text-slate-400"><%= body %></p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <%# Team %>
+  <section class="mt-16" data-reveal>
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="font-display text-3xl font-bold">The people behind it</h2>
+      <p class="mt-3 text-slate-400">A small team that has been on both sides of the hiring table.</p>
+    </div>
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <% [
+           ["Ava Mitchell", "Founder & CEO", 47],
+           ["Daniel Okafor", "Head of Product", 33],
+           ["Priya Nair", "Design Lead", 45],
+           ["Marcus Lee", "Engineering", 52]
+         ].each_with_index do |(name, role, img), i| %>
+        <div data-reveal style="transition-delay: <%= i * 70 %>ms" class="hover-lift rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
+          <%= avatar_tag img, seed: "team-#{i}", alt: name, size: 160, class: "mx-auto h-20 w-20 rounded-full object-cover ring-2 ring-cyan-400/30" %>
+          <h3 class="mt-4 font-semibold"><%= name %></h3>
+          <p class="text-sm text-slate-400"><%= role %></p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <%# CTA %>
+  <section class="mt-16" data-reveal>
+    <div class="animated-gradient rounded-3xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-fuchsia-500 p-10 text-center sm:p-14">
+      <h2 class="font-display text-3xl font-bold text-slate-950 sm:text-4xl">Come deliver with us</h2>
+      <p class="mx-auto mt-3 max-w-xl text-slate-950/80">Set up your dashboard in under a minute — as a poster or an applicant.</p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <%= link_to "Become a Member", root_path(anchor: "join"), class: "rounded-xl bg-slate-950 px-7 py-3.5 font-semibold text-white transition hover:bg-slate-800" %>
+        <%= link_to "Browse the board", jobs_path, class: "rounded-xl border border-slate-950/30 bg-white/20 px-7 py-3.5 font-semibold text-slate-950 backdrop-blur transition hover:bg-white/30" %>
+      </div>
+    </div>
+  </section>
+
+</div>

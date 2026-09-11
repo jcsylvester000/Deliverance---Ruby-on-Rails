@@ -4,42 +4,97 @@
     <title><%= content_for(:title) || "Deliverance — We can Deliver" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="Deliverance — Looking for a Job, We can Deliver. Post gigs, projects and full-time roles, and track every applicant like a pipeline.">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= yield :head %>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚚</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <style>
+      :root { --font-body:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+              --font-display:"Space Grotesk","Inter",ui-sans-serif,system-ui,sans-serif; }
+      body { font-family: var(--font-body); }
+      .font-display { font-family: var(--font-display); letter-spacing:-.02em; }
+
+      @keyframes fadeUp { from { opacity:0; transform: translateY(18px);} to { opacity:1; transform:none;} }
+      @keyframes floaty { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-14px);} }
+      @keyframes gradientShift { 0% { background-position:0% 50%;} 50% { background-position:100% 50%;} 100% { background-position:0% 50%;} }
+      @keyframes blob { 0%,100% { transform: translate(0,0) scale(1);} 33% { transform: translate(30px,-20px) scale(1.1);} 66% { transform: translate(-20px,20px) scale(.95);} }
+      @keyframes spinSlow { to { transform: rotate(360deg);} }
+      @keyframes shimmer { 100% { transform: translateX(100%);} }
+      @keyframes marquee { from { transform: translateX(0);} to { transform: translateX(-50%);} }
+      @keyframes pulseGlow { 0%,100% { box-shadow:0 0 0 0 rgba(34,211,238,.35);} 50% { box-shadow:0 0 34px 4px rgba(34,211,238,.25);} }
+
+      .anim-fade-up { opacity:0; animation: fadeUp .8s cubic-bezier(.2,.7,.2,1) forwards; }
+      .d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}
+      .d4{animation-delay:.32s}.d5{animation-delay:.40s}.d6{animation-delay:.48s}
+      .floaty { animation: floaty 7s ease-in-out infinite; }
+      .floaty-slow { animation: floaty 11s ease-in-out infinite; }
+      .blobby { animation: blob 18s ease-in-out infinite; }
+      .spin-slow { animation: spinSlow 22s linear infinite; }
+      .pulse-glow { animation: pulseGlow 3.5s ease-in-out infinite; }
+      .animated-gradient { background-size:200% 200%; animation: gradientShift 10s ease infinite; }
+      .gradient-text {
+        background-image: linear-gradient(100deg,#22d3ee,#818cf8,#e879f9,#22d3ee);
+        background-size:200% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
+        animation: gradientShift 8s ease infinite;
+      }
+      .hover-lift { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+      .hover-lift:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -20px rgba(34,211,238,.35); }
+      [data-reveal] { opacity:0; transform: translateY(24px); }
+      [data-reveal].revealed { opacity:1; transform:none; transition: opacity .7s ease, transform .7s ease; }
+      .marquee-track { display:flex; width:max-content; animation: marquee 32s linear infinite; }
+      .card-sheen { position:relative; overflow:hidden; }
+      .card-sheen::after { content:""; position:absolute; inset:0; transform:translateX(-100%);
+        background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.08) 50%,transparent 70%); }
+      .card-sheen:hover::after { animation: shimmer 1.1s ease; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .anim-fade-up,[data-reveal]{ animation:none!important; opacity:1!important; transform:none!important; }
+        .floaty,.floaty-slow,.blobby,.spin-slow,.pulse-glow,.animated-gradient,.gradient-text,.marquee-track{ animation:none!important; }
+      }
+    </style>
   </head>
 
   <body class="h-full bg-slate-950 text-slate-100 antialiased">
-    <header class="border-b border-white/10 bg-slate-950/80 backdrop-blur">
+    <header class="sticky top-0 z-40 border-b border-white/10 bg-slate-950/70 backdrop-blur-xl">
       <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <%= link_to root_path, class: "flex items-center gap-2 font-semibold tracking-tight" do %>
-          <span class="text-xl">🚚</span>
-          <span class="text-lg">Deliverance</span>
+          <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-cyan-400 to-indigo-500 text-slate-950">🚚</span>
+          <span class="font-display text-lg">Deliverance</span>
         <% end %>
 
-        <div class="flex items-center gap-3 text-sm">
+        <div class="flex items-center gap-1 sm:gap-3 text-sm">
           <% if user_signed_in? %>
-            <%= link_to "Dashboard", dashboard_path_for(current_user), class: "text-slate-300 hover:text-white" %>
-            <%= link_to "Calendar", (current_user.job_poster? ? poster_interviews_path : applicant_interviews_path), class: "hidden text-slate-300 hover:text-white sm:inline" %>
+            <%= link_to "Dashboard", dashboard_path_for(current_user), class: "rounded-md px-2 py-1.5 text-slate-300 hover:text-white" %>
+            <%= link_to "Calendar", (current_user.job_poster? ? poster_interviews_path : applicant_interviews_path), class: "hidden rounded-md px-2 py-1.5 text-slate-300 hover:text-white sm:inline" %>
             <% unread_msgs = current_user.unread_conversations_count %>
-            <%= link_to conversations_path, class: "relative text-slate-300 hover:text-white", title: "Messages" do %>
+            <%= link_to conversations_path, class: "relative rounded-md px-2 py-1.5 text-slate-300 hover:text-white", title: "Messages" do %>
               💬
               <% if unread_msgs.positive? %>
-                <span class="absolute -right-2 -top-1 min-w-[18px] rounded-full bg-cyan-500 px-1 text-center text-[10px] font-bold leading-[18px] text-slate-950"><%= unread_msgs %></span>
+                <span class="absolute -right-1 -top-0.5 min-w-[18px] rounded-full bg-cyan-500 px-1 text-center text-[10px] font-bold leading-[18px] text-slate-950"><%= unread_msgs %></span>
               <% end %>
             <% end %>
             <%= turbo_stream_from [current_user, :notifications] %>
             <%= render "notifications/bell", user: current_user %>
-            <span class="hidden text-slate-500 sm:inline"><%= current_user.display_name %></span>
+            <span class="hidden text-slate-500 lg:inline"><%= current_user.display_name %></span>
             <%= button_to "Sign out", destroy_user_session_path, method: :delete,
                   class: "rounded-md border border-white/15 px-3 py-1.5 text-slate-200 hover:bg-white/10" %>
           <% else %>
-            <%= link_to "Log in", new_user_session_path, class: "text-slate-300 hover:text-white" %>
+            <%= link_to "Jobs", jobs_path, class: "hidden rounded-md px-2 py-1.5 text-slate-300 hover:text-white sm:inline" %>
+            <%= link_to "Why join", membership_path, class: "hidden rounded-md px-2 py-1.5 text-slate-300 hover:text-white sm:inline" %>
+            <%= link_to "Blog", articles_path, class: "hidden rounded-md px-2 py-1.5 text-slate-300 hover:text-white sm:inline" %>
+            <%= link_to "About", about_path, class: "hidden rounded-md px-2 py-1.5 text-slate-300 hover:text-white md:inline" %>
+            <%= link_to "Log in", new_user_session_path, class: "rounded-md px-2 py-1.5 text-slate-300 hover:text-white" %>
             <%= link_to "Become a Member", root_path(anchor: "join"),
-                  class: "rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400" %>
+                  class: "rounded-lg bg-gradient-to-r from-cyan-400 to-indigo-500 px-3 py-1.5 font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 hover:brightness-110" %>
           <% end %>
         </div>
       </nav>
@@ -52,12 +107,47 @@
       <div class="mx-auto mt-4 max-w-6xl px-4"><div class="rounded-md border border-rose-500/30 bg-rose-500/10 px-4 py-2 text-sm text-rose-200"><%= alert %></div></div>
     <% end %>
 
-    <main class="mx-auto max-w-6xl px-4 py-8">
+    <main class="<%= content_for?(:full_bleed) ? "" : "mx-auto max-w-6xl px-4 py-8" %>">
       <%= yield %>
     </main>
 
-    <footer class="mt-16 border-t border-white/10 py-8 text-center text-xs text-slate-500">
-      Deliverance · Looking for a Job, We can Deliver
+    <footer class="mt-20 border-t border-white/10 bg-slate-950">
+      <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <div class="flex items-center gap-2 font-semibold">
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-cyan-400 to-indigo-500 text-slate-950">🚚</span>
+            <span class="font-display">Deliverance</span>
+          </div>
+          <p class="mt-3 text-sm text-slate-400">Looking for a Job, We can Deliver. Gigs, projects, and full-time roles — matched with less friction.</p>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-slate-200">Product</p>
+          <ul class="mt-3 space-y-2 text-sm text-slate-400">
+            <li><%= link_to "Browse jobs", jobs_path, class: "hover:text-white" %></li>
+            <li><%= link_to "Become a member", root_path(anchor: "join"), class: "hover:text-white" %></li>
+            <li><%= link_to "Why join", membership_path, class: "hover:text-white" %></li>
+          </ul>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-slate-200">Company</p>
+          <ul class="mt-3 space-y-2 text-sm text-slate-400">
+            <li><%= link_to "About us", about_path, class: "hover:text-white" %></li>
+            <li><%= link_to "Blog", articles_path, class: "hover:text-white" %></li>
+          </ul>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-slate-200">Stay in the loop</p>
+          <p class="mt-3 text-sm text-slate-400">A demo product — content and imagery are placeholders.</p>
+          <div class="mt-3 flex gap-3 text-slate-400">
+            <span class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 hover:text-white">✦</span>
+            <span class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 hover:text-white">✉</span>
+            <span class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 hover:text-white">◎</span>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-white/10 py-6 text-center text-xs text-slate-500">
+        © <%= Date.current.year %> Deliverance · Looking for a Job, We can Deliver
+      </div>
     </footer>
   </body>
 </html>

@@ -1,0 +1,58 @@
+<% content_for :title, "Blog — Deliverance" %>
+
+<div data-controller="reveal">
+
+  <section class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 px-6 py-14 sm:px-12">
+    <div class="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-cyan-500/15 blur-3xl blobby"></div>
+    <div class="relative max-w-2xl">
+      <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-cyan-300">The blog</p>
+      <h1 class="font-display text-4xl font-bold sm:text-5xl">Playbooks for <span class="gradient-text">posters & applicants</span></h1>
+      <p class="mt-4 max-w-xl text-slate-300">Short, practical reads on hiring well and job-hunting sanely.</p>
+    </div>
+  </section>
+
+  <%# Featured (first article) %>
+  <% featured = @articles.first %>
+  <% if featured %>
+    <%= link_to article_path(featured), data: { reveal: "" },
+          class: "hover-lift card-sheen group mt-10 grid overflow-hidden rounded-3xl border border-white/10 bg-white/5 md:grid-cols-2" do %>
+      <div class="relative h-56 overflow-hidden md:h-full">
+        <%= photo_tag featured.cover_id, seed: featured.slug, alt: featured.title, width: 1200, height: 800,
+              class: "h-full w-full object-cover transition duration-500 group-hover:scale-105" %>
+        <span class="absolute left-4 top-4 rounded-full bg-slate-950/70 px-2.5 py-1 text-xs font-medium text-cyan-200 backdrop-blur"><%= featured.tag %></span>
+      </div>
+      <div class="p-8">
+        <p class="text-xs uppercase tracking-widest text-slate-500">Featured</p>
+        <h2 class="mt-2 font-display text-2xl font-bold group-hover:text-white"><%= featured.title %></h2>
+        <p class="mt-3 text-slate-400"><%= featured.excerpt %></p>
+        <div class="mt-6 flex items-center gap-3">
+          <%= avatar_tag featured.author_avatar, seed: "a-#{featured.slug}", alt: featured.author, size: 96, class: "h-9 w-9 rounded-full object-cover" %>
+          <div class="text-sm">
+            <p class="font-medium text-slate-200"><%= featured.author %></p>
+            <p class="text-slate-500"><%= featured.published_on.strftime("%b %-d, %Y") %> · <%= featured.read_minutes %> min read</p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%# Rest of the grid %>
+  <section class="mt-8 grid gap-6 md:grid-cols-3" data-reveal>
+    <% @articles.drop(1).each_with_index do |article, i| %>
+      <%= link_to article_path(article), data: { reveal: "" }, style: "transition-delay: #{i * 70}ms",
+            class: "hover-lift card-sheen group block overflow-hidden rounded-2xl border border-white/10 bg-white/5" do %>
+        <div class="relative h-44 overflow-hidden">
+          <%= photo_tag article.cover_id, seed: article.slug, alt: article.title, width: 900, height: 500,
+                class: "h-full w-full object-cover transition duration-500 group-hover:scale-105" %>
+          <span class="absolute left-4 top-4 rounded-full bg-slate-950/70 px-2.5 py-1 text-xs font-medium text-cyan-200 backdrop-blur"><%= article.tag %></span>
+        </div>
+        <div class="p-5">
+          <h3 class="font-display font-semibold text-slate-100 group-hover:text-white"><%= article.title %></h3>
+          <p class="mt-2 line-clamp-2 text-sm text-slate-400"><%= article.excerpt %></p>
+          <p class="mt-4 text-xs text-slate-500"><%= article.published_on.strftime("%b %-d, %Y") %> · <%= article.read_minutes %> min read</p>
+        </div>
+      <% end %>
+    <% end %>
+  </section>
+
+</div>

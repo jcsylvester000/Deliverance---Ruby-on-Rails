@@ -1,0 +1,113 @@
+<% content_for :title, "Why become a member — Deliverance" %>
+
+<div data-controller="reveal">
+
+  <%# Hero %>
+  <section class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 px-6 py-16 text-center sm:px-12">
+    <div class="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-fuchsia-500/15 blur-3xl blobby"></div>
+    <div class="pointer-events-none absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-cyan-500/15 blur-3xl floaty-slow"></div>
+    <div class="relative mx-auto max-w-2xl">
+      <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-cyan-300">Why become a member</p>
+      <h1 class="font-display text-4xl font-bold leading-tight sm:text-6xl">Everything you need to<br><span class="gradient-text">hire or get hired.</span></h1>
+      <p class="mt-5 text-lg text-slate-300">One free account. Two purpose-built dashboards. Zero spreadsheet chaos.</p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <%= link_to "Become a Member", root_path(anchor: "join"), class: "pulse-glow rounded-xl bg-gradient-to-r from-cyan-400 to-indigo-500 px-6 py-3.5 font-semibold text-slate-950 shadow-lg shadow-cyan-500/30 transition hover:brightness-110" %>
+        <%= link_to "Browse the board", jobs_path, class: "rounded-xl border border-white/20 bg-white/5 px-6 py-3.5 font-medium text-slate-100 transition hover:bg-white/10" %>
+      </div>
+    </div>
+  </section>
+
+  <%# Two audiences %>
+  <section class="mt-12 grid gap-6 lg:grid-cols-2">
+    <div data-reveal class="hover-lift rounded-3xl border border-cyan-400/20 bg-cyan-400/[0.04] p-8">
+      <span class="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-200">📢 For Job Posters</span>
+      <h2 class="mt-4 font-display text-2xl font-bold">Run hiring like a pipeline</h2>
+      <ul class="mt-5 space-y-3 text-sm text-slate-300">
+        <% ["Post up to 10 live roles with pay ranges and rich detail",
+            "Every applicant becomes a card you move: applied → review → interview → offer → hired",
+            "Built-in interview scheduling with calendar (.ics) invites",
+            "Accept-only messaging and group chats keep noise out",
+            "Real-time notifications the moment something changes",
+            "Secure document collection when you onboard a hire"].each do |point| %>
+          <li class="flex gap-3"><span class="mt-0.5 text-cyan-300">✓</span><span><%= point %></span></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <div data-reveal style="transition-delay:90ms" class="hover-lift rounded-3xl border border-indigo-400/20 bg-indigo-400/[0.04] p-8">
+      <span class="rounded-full border border-indigo-400/30 bg-indigo-400/10 px-3 py-1 text-xs font-medium text-indigo-200">🎯 For Applicants</span>
+      <h2 class="mt-4 font-display text-2xl font-bold">Apply once, then track it</h2>
+      <ul class="mt-5 space-y-3 text-sm text-slate-300">
+        <% ["Browse every open role for free — no account needed to look",
+            "Register only at the moment you apply",
+            "Watch your application move through each stage in real time",
+            "Automatic interview invites, reminders, and calendar files",
+            "Opt in to discovery so posters can find you",
+            "Onboard securely with document upload once you're hired"].each do |point| %>
+          <li class="flex gap-3"><span class="mt-0.5 text-indigo-300">✓</span><span><%= point %></span></li>
+        <% end %>
+      </ul>
+    </div>
+  </section>
+
+  <%# Feature grid %>
+  <section class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-reveal>
+    <% [
+         ["🗂️", "Pipeline CRM", "Move every applicant through clear, visible stages."],
+         ["📅", "Interviews & calendar", "Schedule, reschedule, and cancel with downloadable invites."],
+         ["💬", "Accept-only messaging", "Conversations start only when both sides opt in."],
+         ["🔔", "Real-time notifications", "Live updates via Turbo Streams — no refresh needed."],
+         ["📤", "Secure onboarding", "Collect documents once a candidate is hired."],
+         ["🧭", "Discovery", "Applicants opt in to be found by posters."]
+       ].each_with_index do |(icon, title, body), i| %>
+      <div data-reveal style="transition-delay: <%= (i % 3) * 70 %>ms" class="hover-lift rounded-2xl border border-white/10 bg-white/5 p-5">
+        <span class="text-2xl"><%= icon %></span>
+        <h4 class="mt-3 font-semibold"><%= title %></h4>
+        <p class="mt-1 text-sm text-slate-400"><%= body %></p>
+      </div>
+    <% end %>
+  </section>
+
+  <%# Price / demo note %>
+  <section class="mt-12" data-reveal>
+    <div class="mx-auto max-w-md rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.02] p-8 text-center">
+      <p class="text-sm font-semibold uppercase tracking-widest text-cyan-300">Membership</p>
+      <div class="mt-3 font-display text-5xl font-bold">Free<span class="text-lg font-medium text-slate-400"> / demo</span></div>
+      <p class="mt-3 text-sm text-slate-400">Deliverance is a demo product — every feature is open, with no billing. Create an account and explore both dashboards.</p>
+      <%= link_to "Get started", root_path(anchor: "join"), class: "mt-6 inline-flex rounded-xl bg-gradient-to-r from-cyan-400 to-indigo-500 px-6 py-3 font-semibold text-slate-950 transition hover:brightness-110" %>
+    </div>
+  </section>
+
+  <%# FAQ %>
+  <section class="mt-16" data-reveal>
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="font-display text-3xl font-bold">Questions, answered</h2>
+    </div>
+    <div class="mx-auto mt-8 max-w-3xl space-y-3">
+      <% [
+           ["Do I need an account to browse jobs?", "No. The entire board is public — you only create an account when you're ready to apply or to post a role."],
+           ["Can I be both a poster and an applicant?", "Your dashboard is shaped by the role you choose at sign-up, so it focuses on one job at a time. You pick what fits when you register."],
+           ["How does messaging stay spam-free?", "Messaging is accept-only: a conversation starts only after the recipient accepts the request. You can decline or block at any time."],
+           ["Is my onboarding document stored safely?", "This is a prototype, so uploads are for demonstration only — don't upload real IDs. Any image works to try the flow."]
+         ].each do |q, a| %>
+        <details class="group rounded-2xl border border-white/10 bg-white/5 p-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between font-medium">
+            <span><%= q %></span>
+            <span class="text-cyan-300 transition group-open:rotate-45">＋</span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-400"><%= a %></p>
+        </details>
+      <% end %>
+    </div>
+  </section>
+
+  <%# CTA %>
+  <section class="mt-16" data-reveal>
+    <div class="animated-gradient rounded-3xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-fuchsia-500 p-10 text-center sm:p-14">
+      <h2 class="font-display text-3xl font-bold text-slate-950 sm:text-4xl">Ready when you are</h2>
+      <p class="mx-auto mt-3 max-w-xl text-slate-950/80">Join in under a minute and set up the dashboard that fits how you work.</p>
+      <%= link_to "Become a Member", root_path(anchor: "join"), class: "mt-8 inline-flex rounded-xl bg-slate-950 px-7 py-3.5 font-semibold text-white transition hover:bg-slate-800" %>
+    </div>
+  </section>
+
+</div>

@@ -12,4 +12,16 @@ RSpec.describe "Public pages", type: :request do
     get root_path
     expect(response).to redirect_to(poster_dashboard_path)
   end
+
+  it "shows the about page to visitors" do
+    get about_path
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Our mission")
+  end
+
+  it "shows the why-join page to visitors" do
+    get membership_path
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Why become a member")
+  end
 end

@@ -1,0 +1,68 @@
+<% content_for :title, "#{@article.title} — Deliverance" %>
+
+<div data-controller="reveal">
+
+  <div class="mb-6">
+    <%= link_to "← All articles", articles_path, class: "text-sm text-cyan-300 hover:text-cyan-200" %>
+  </div>
+
+  <article class="mx-auto max-w-3xl">
+    <header>
+      <span class="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-200"><%= @article.tag %></span>
+      <h1 class="mt-4 font-display text-4xl font-bold leading-tight sm:text-5xl"><%= @article.title %></h1>
+      <p class="mt-4 text-lg text-slate-300"><%= @article.excerpt %></p>
+      <div class="mt-6 flex items-center gap-3">
+        <%= avatar_tag @article.author_avatar, seed: "a-#{@article.slug}", alt: @article.author, size: 96, class: "h-11 w-11 rounded-full object-cover ring-2 ring-cyan-400/30" %>
+        <div class="text-sm">
+          <p class="font-medium text-slate-200"><%= @article.author %></p>
+          <p class="text-slate-500"><%= @article.author_role %> · <%= @article.published_on.strftime("%b %-d, %Y") %> · <%= @article.read_minutes %> min read</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="mt-8 overflow-hidden rounded-3xl border border-white/10">
+      <%= photo_tag @article.cover_id, seed: @article.slug, alt: @article.title, width: 1400, height: 800,
+            class: "h-full w-full object-cover", loading: "eager" %>
+    </div>
+
+    <div class="prose-invert mt-8 space-y-5 text-lg leading-relaxed text-slate-300">
+      <% @article.body.each do |paragraph| %>
+        <p><%= paragraph %></p>
+      <% end %>
+    </div>
+
+    <%# Author card %>
+    <div class="mt-10 flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-6">
+      <%= avatar_tag @article.author_avatar, seed: "ab-#{@article.slug}", alt: @article.author, size: 128, class: "h-14 w-14 rounded-full object-cover" %>
+      <div>
+        <p class="font-semibold"><%= @article.author %></p>
+        <p class="text-sm text-slate-400"><%= @article.author_role %></p>
+      </div>
+      <%= link_to "Become a Member", root_path(anchor: "join"), class: "ml-auto hidden rounded-lg bg-gradient-to-r from-cyan-400 to-indigo-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:brightness-110 sm:inline-flex" %>
+    </div>
+  </article>
+
+  <%# More articles %>
+  <% if @more.present? %>
+    <section class="mx-auto mt-16 max-w-5xl" data-reveal>
+      <h2 class="font-display text-2xl font-bold">Keep reading</h2>
+      <div class="mt-6 grid gap-6 md:grid-cols-3">
+        <% @more.each_with_index do |article, i| %>
+          <%= link_to article_path(article), data: { reveal: "" }, style: "transition-delay: #{i * 70}ms",
+                class: "hover-lift card-sheen group block overflow-hidden rounded-2xl border border-white/10 bg-white/5" do %>
+            <div class="relative h-36 overflow-hidden">
+              <%= photo_tag article.cover_id, seed: article.slug, alt: article.title, width: 800, height: 450,
+                    class: "h-full w-full object-cover transition duration-500 group-hover:scale-105" %>
+            </div>
+            <div class="p-5">
+              <p class="text-xs text-cyan-300"><%= article.tag %></p>
+              <h3 class="mt-1 font-display font-semibold group-hover:text-white"><%= article.title %></h3>
+              <p class="mt-2 text-xs text-slate-500"><%= article.read_minutes %> min read</p>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+</div>
