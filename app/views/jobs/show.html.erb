@@ -1,0 +1,59 @@
+<% content_for :title, "#{@job.title} — Deliverance" %>
+
+<div class="mx-auto max-w-3xl">
+  <%= link_to "← Back to jobs", jobs_path, class: "text-sm text-slate-400 hover:text-white" %>
+
+  <div class="mt-4 rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <h1 class="text-2xl font-semibold tracking-tight"><%= @job.title %></h1>
+        <p class="mt-1 text-slate-400"><%= @job.poster.display_name %></p>
+      </div>
+      <span class="rounded-lg bg-cyan-500/10 px-3 py-1.5 text-sm font-medium text-cyan-200"><%= @job.compensation_display %></span>
+    </div>
+
+    <div class="mt-4 flex flex-wrap gap-2 text-xs">
+      <span class="rounded-full border border-indigo-400/30 bg-indigo-400/10 px-2.5 py-1 text-indigo-200"><%= @job.work_arrangement_label %></span>
+      <span class="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-slate-300"><%= @job.employment_type_label %></span>
+      <% if @job.location.present? %>
+        <span class="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-slate-400">📍 <%= @job.location %></span>
+      <% end %>
+    </div>
+
+    <div class="prose prose-invert mt-6 max-w-none whitespace-pre-line text-slate-300">
+<%= @job.description %>
+    </div>
+
+    <div class="mt-8 border-t border-white/10 pt-6">
+      <% if !user_signed_in? %>
+        <%= link_to "Register to apply", root_path(anchor: "join"),
+              class: "inline-block rounded-lg bg-cyan-500 px-5 py-3 font-semibold text-slate-950 hover:bg-cyan-400" %>
+        <p class="mt-2 text-sm text-slate-500">Create an applicant account to apply and track this role.</p>
+      <% elsif current_user.applicant? %>
+        <% existing = current_user.applications.active.find_by(job_posting_id: @job.id) %>
+        <% if existing %>
+          <span class="inline-block rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-5 py-3 font-semibold text-emerald-200">Applied ✓ — <%= existing.stage_label %></span>
+          <p class="mt-2 text-sm text-slate-500"><%= link_to "Track it in your applications →", applicant_applications_path, class: "text-cyan-300 hover:text-cyan-200" %></p>
+        <% elsif current_user.applications.active.count >= Application::MAX_ACTIVE_PER_APPLICANT %>
+          <button type="button" disabled class="cursor-not-allowed rounded-lg bg-cyan-500/40 px-5 py-3 font-semibold text-slate-950">Apply</button>
+          <p class="mt-2 text-sm text-slate-500">You've reached <%= Application::MAX_ACTIVE_PER_APPLICANT %> active applications. Withdraw one to apply here.</p>
+        <% else %>
+          <%= button_to "Apply now", applicant_applications_path(job_posting_id: @job.id), method: :post,
+                class: "rounded-lg bg-cyan-500 px-5 py-3 font-semibold text-slate-950 hover:bg-cyan-400" %>
+          <p class="mt-2 text-sm text-slate-500">One click — we'll track it in your dashboard and notify the poster.</p>
+        <% end %>
+      <% else %>
+        <p class="text-sm text-slate-500">You're viewing as a job poster.</p>
+      <% end %>
+
+      <% if user_signed_in? && current_user.applicant? %>
+        <%= form_with url: conversations_path, method: :post, class: "mt-4 flex gap-2" do %>
+          <%= hidden_field_tag :recipient_id, @job.poster_id %>
+          <%= text_field_tag :body, "Hi! I'm interested in \"#{@job.title}\".",
+                class: "flex-1 rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-slate-100" %>
+          <%= submit_tag "Message the poster", class: "rounded-lg border border-white/15 px-3 py-2 text-sm text-slate-200 hover:bg-white/10 cursor-pointer" %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

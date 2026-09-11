@@ -1,0 +1,26 @@
+# Deliverance — Render Blueprint (production, Docker).
+# In Render: New → Blueprint → point at this repo. It builds the production ./Dockerfile.
+# The two secret env vars are marked sync:false — you set them in the Render dashboard.
+services:
+  - type: web
+    name: deliverance
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: singapore          # closest to the ap-southeast-1 Neon endpoint; change if you prefer
+    healthCheckPath: /up
+    autoDeploy: false
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_LOG_LEVEL
+        value: info
+      # Neon production database — DIRECT (non-pooled) endpoint. Set the value in the dashboard.
+      - key: NEON_DATABASE_URL
+        sync: false
+      # Contents of config/master.key (git-ignored). Set the value in the dashboard.
+      - key: RAILS_MASTER_KEY
+        sync: false
+      # UploadThing token for the server-side uploader. Set the value in the dashboard.
+      - key: UPLOADTHING_TOKEN
+        sync: false

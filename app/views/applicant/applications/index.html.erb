@@ -1,0 +1,49 @@
+<% content_for :title, "My applications" %>
+
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <div>
+    <%= link_to "← Dashboard", applicant_dashboard_path, class: "text-sm text-slate-400 hover:text-white" %>
+    <h1 class="mt-1 text-2xl font-semibold tracking-tight">My applications</h1>
+    <p class="mt-1 text-sm text-slate-400">
+      <span class="text-slate-200"><%= @active_count %></span> / <%= Application::MAX_ACTIVE_PER_APPLICANT %> active
+      <span class="text-slate-500">· withdrawing frees a slot</span>
+    </p>
+  </div>
+  <%= link_to "Browse jobs →", jobs_path, class: "rounded-lg bg-cyan-500 px-4 py-2.5 font-semibold text-slate-950 hover:bg-cyan-400" %>
+</div>
+
+<div class="mt-6 space-y-3">
+  <% if @applications.any? %>
+    <% @applications.each do |app| %>
+      <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="font-medium text-slate-100"><%= app.job_posting.title %></span>
+            <%= stage_badge(app) %>
+          </div>
+          <p class="mt-0.5 text-sm text-slate-400">
+            <%= app.job_posting.poster.display_name %> · applied <%= app.created_at.to_date.to_fs(:long) %>
+          </p>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+          <% if app.onboarding_active? %>
+            <%= link_to "Onboarding →", onboarding_applicant_application_path(app),
+                  class: "rounded-md bg-emerald-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-emerald-400" %>
+          <% end %>
+          <% if app.job_posting.published? %>
+            <%= link_to "View role", job_path(app.job_posting), class: "text-slate-300 hover:text-white" %>
+          <% end %>
+          <% unless app.closed? %>
+            <%= button_to "Withdraw", withdraw_applicant_application_path(app), method: :patch,
+                  form: { data: { turbo_confirm: "Withdraw this application?" } },
+                  class: "rounded-md border border-white/15 px-3 py-1.5 text-slate-300 hover:bg-white/10" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="rounded-2xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-slate-400">
+      You haven't applied to anything yet. <%= link_to "Browse the board", jobs_path, class: "text-cyan-300 hover:text-cyan-200" %>.
+    </div>
+  <% end %>
+</div>

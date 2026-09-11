@@ -1,0 +1,44 @@
+<% content_for :title, "Messages" %>
+
+<div class="mx-auto max-w-2xl">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-semibold tracking-tight">Messages</h1>
+    <% if current_user.applicant? %>
+      <div class="flex gap-3 text-sm">
+        <%= link_to "Groups", applicant_groups_path, class: "text-cyan-300 hover:text-cyan-200" %>
+        <%= link_to "Find people →", applicant_people_path, class: "text-cyan-300 hover:text-cyan-200" %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @requests.any? %>
+    <h2 class="mt-6 text-sm font-medium text-slate-400">Requests</h2>
+    <div class="mt-2 space-y-2">
+      <% @requests.each do |c| %>
+        <%= link_to conversation_path(c), class: "flex items-center justify-between rounded-xl border border-cyan-400/30 bg-cyan-400/[0.06] p-3 hover:bg-cyan-400/10" do %>
+          <span class="text-slate-100"><%= c.title_for(current_user) %></span>
+          <span class="rounded-full bg-cyan-500/20 px-2 py-0.5 text-xs text-cyan-200">wants to connect</span>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <h2 class="mt-6 text-sm font-medium text-slate-400">Conversations</h2>
+  <div class="mt-2 space-y-2">
+    <% if @threads.any? %>
+      <% @threads.each do |c| %>
+        <%= link_to conversation_path(c), class: "block rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/[0.07]" do %>
+          <div class="flex items-center justify-between">
+            <span class="font-medium text-slate-100"><%= c.title_for(current_user) %></span>
+            <span class="text-xs text-slate-500"><%= c.messages.last&.created_at&.strftime("%b %-d") %></span>
+          </div>
+          <p class="mt-0.5 truncate text-sm text-slate-400"><%= c.messages.last&.body %></p>
+        <% end %>
+      <% end %>
+    <% else %>
+      <div class="rounded-2xl border border-dashed border-white/15 bg-white/5 p-8 text-center text-slate-400">
+        No conversations yet.<% if current_user.applicant? %> <%= link_to "Find people to connect with", applicant_people_path, class: "text-cyan-300 hover:text-cyan-200" %>.<% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

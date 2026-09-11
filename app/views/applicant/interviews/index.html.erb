@@ -1,0 +1,38 @@
+<% content_for :title, "My interviews" %>
+
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <div>
+    <%= link_to "← Dashboard", applicant_dashboard_path, class: "text-sm text-slate-400 hover:text-white" %>
+    <h1 class="mt-1 text-2xl font-semibold tracking-tight">Interviews</h1>
+    <p class="mt-1 text-sm text-slate-400">Everything a poster has scheduled with you.</p>
+  </div>
+  <%= link_to "My applications →", applicant_applications_path, class: "rounded-lg border border-white/15 px-4 py-2.5 text-slate-200 hover:bg-white/10" %>
+</div>
+
+<div class="mt-6"><%= render "shared/calendar", interviews: @interviews, month: @month, viewer: :applicant %></div>
+
+<h2 class="mt-8 text-lg font-semibold">Upcoming</h2>
+<div class="mt-3 space-y-3">
+  <% if @upcoming.any? %>
+    <% @upcoming.each do |iv| %>
+      <div id="interview-<%= iv.id %>" class="rounded-2xl border border-white/10 bg-white/5 p-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p class="font-medium text-slate-100"><%= iv.job_posting.title %> · <span class="text-slate-400"><%= iv.job_posting.poster.display_name %></span></p>
+            <p class="mt-0.5 text-sm text-slate-400">
+              <%= iv.scheduled_at.to_fs(:long) %> · <%= iv.duration_minutes %> min · <%= iv.mode_label %>
+              <% if iv.online? && iv.meeting_link.present? %> · <%= link_to "Join link", iv.meeting_link, class: "text-cyan-300 hover:text-cyan-200", target: "_blank", rel: "noopener" %><% end %>
+              <% if iv.onsite? && iv.location.present? %> · 📍 <%= iv.location %><% end %>
+            </p>
+          </div>
+          <%= link_to "Add to calendar", ics_applicant_interview_path(iv), class: "rounded-md border border-white/15 px-3 py-1.5 text-sm text-slate-300 hover:bg-white/10" %>
+        </div>
+        <% if iv.notes.present? %><p class="mt-2 whitespace-pre-line text-sm text-slate-400"><%= iv.notes %></p><% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="rounded-2xl border border-dashed border-white/15 bg-white/5 p-8 text-center text-slate-400">
+      No interviews scheduled yet. Keep an eye on your notifications.
+    </div>
+  <% end %>
+</div>

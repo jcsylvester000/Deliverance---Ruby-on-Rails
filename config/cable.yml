@@ -1,0 +1,10 @@
+development:
+  adapter: async
+
+test:
+  adapter: test
+
+# Demo/prototype: in-process adapter so live Turbo Streams work on a single Render instance
+# without a Redis add-on. For multi-instance production, switch to redis and set REDIS_URL.
+production:
+  adapter: async

@@ -1,0 +1,163 @@
+<% content_for :title, "Deliverance — Looking for a Job, We can Deliver" %>
+
+<div data-controller="join" data-action="keydown.esc->join#close">
+
+<section class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 px-6 py-16 sm:px-12">
+  <div class="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl"></div>
+  <div class="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-indigo-500/10 blur-3xl"></div>
+
+  <div class="relative max-w-2xl">
+    <p class="mb-3 inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-200">
+      Gigs · Projects · Full-time with benefits
+    </p>
+    <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Deliverance</h1>
+    <p class="mt-3 text-lg text-slate-300">Looking for a Job, We can Deliver.</p>
+    <p class="mt-4 max-w-xl text-slate-400">
+      Post temporary, project-based, or full-time roles — remote, hybrid, or on-site — and track every
+      applicant like a pipeline. Browsing is open to everyone; you register when you're ready to apply.
+    </p>
+
+    <div class="mt-8 flex flex-wrap items-center gap-3">
+      <button type="button" data-action="join#open"
+        class="rounded-lg bg-cyan-500 px-5 py-3 font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 hover:bg-cyan-400">
+        Login / Become a Member
+      </button>
+      <a href="#board" class="rounded-lg border border-white/15 px-5 py-3 font-medium text-slate-200 hover:bg-white/5">
+        Browse the board
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="board" class="mt-12">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl font-semibold">Open roles</h2>
+    <%= link_to "Browse all →", jobs_path, class: "text-sm text-cyan-300 hover:text-cyan-200" %>
+  </div>
+  <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <% if @jobs.present? && @jobs.any? %>
+      <% @jobs.each do |job| %>
+        <%= render "jobs/job_card", job: job %>
+      <% end %>
+    <% else %>
+      <div class="col-span-full rounded-2xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-slate-400">
+        No roles are posted yet — check back soon, or
+        <button type="button" data-action="join#open" class="text-cyan-300 hover:text-cyan-200">become a member</button>
+        to post one.
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<%# ---------------- Get-to-know-you modal ---------------- %>
+<div class="contents">
+  <div data-join-target="overlay" hidden
+       class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur">
+    <div class="w-full max-w-md rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl">
+
+      <div class="mb-5 flex items-center justify-between">
+        <div class="flex gap-1 rounded-lg bg-slate-800 p-1 text-sm">
+          <button type="button" data-join-target="tab" data-tab="register" data-action="join#showRegister"
+                  class="rounded-md px-3 py-1.5 font-medium">Become a Member</button>
+          <button type="button" data-join-target="tab" data-tab="login" data-action="join#showLogin"
+                  class="rounded-md px-3 py-1.5 font-medium text-slate-400">Log in</button>
+        </div>
+        <button type="button" data-action="join#close" class="text-slate-400 hover:text-white" aria-label="Close">✕</button>
+      </div>
+
+      <%# ---- Register panel ---- %>
+      <div data-join-target="register">
+        <div class="mb-4 flex gap-1.5">
+          <% 4.times do |i| %>
+            <span data-join-target="progress" data-index="<%= i %>" class="h-1.5 flex-1 rounded-full bg-slate-700"></span>
+          <% end %>
+        </div>
+
+        <%= form_with url: user_registration_path, scope: :user, method: :post, data: { turbo: false } do |f| %>
+          <%# Step 1 — role (required) %>
+          <div data-join-target="step" data-step="0">
+            <h3 class="text-lg font-semibold">Are you registering as…</h3>
+            <p class="mt-1 text-sm text-slate-400">This shapes your whole dashboard.</p>
+            <div class="mt-4 grid gap-3">
+              <label class="join-choice"><%= f.radio_button :role, "job_poster", class: "peer sr-only", required: true %><span class="join-card">📢 <b>Job Poster</b><small>I post work and hire</small></span></label>
+              <label class="join-choice"><%= f.radio_button :role, "applicant", class: "peer sr-only", required: true %><span class="join-card">🎯 <b>Applicant</b><small>I'm looking for work</small></span></label>
+            </div>
+          </div>
+
+          <%# Step 2 — organization type (required) %>
+          <div data-join-target="step" data-step="1" hidden>
+            <h3 class="text-lg font-semibold">Which best describes you?</h3>
+            <div class="mt-4 grid gap-3">
+              <label class="join-choice"><%= f.radio_button :organization_type, "agency", class: "peer sr-only" %><span class="join-card">🏢 <b>Agency</b><small>I represent multiple clients</small></span></label>
+              <label class="join-choice"><%= f.radio_button :organization_type, "individual", class: "peer sr-only" %><span class="join-card">👤 <b>Individual</b><small>Just me</small></span></label>
+              <label class="join-choice"><%= f.radio_button :organization_type, "company_representative", class: "peer sr-only" %><span class="join-card">🧑‍💼 <b>Company representative</b><small>HR / hiring for a company</small></span></label>
+            </div>
+          </div>
+
+          <%# Step 3 — heard from (optional, skippable) %>
+          <div data-join-target="step" data-step="2" hidden>
+            <h3 class="text-lg font-semibold">How did you hear about us?</h3>
+            <p class="mt-1 text-sm text-slate-400">Optional — hit Skip if you'd rather not say.</p>
+            <%= f.select :heard_from,
+                  ["A friend or colleague", "Social media", "Search engine", "An event", "Other"],
+                  { include_blank: "Select…" },
+                  class: "mt-4 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+          </div>
+
+          <%# Step 4 — credentials + submit %>
+          <div data-join-target="step" data-step="3" hidden>
+            <h3 class="text-lg font-semibold">Create your login</h3>
+            <p class="mt-1 text-sm text-slate-400">Last step — then we'll set up your dashboard.</p>
+            <div class="mt-4 space-y-3">
+              <%= f.email_field :email, required: true, placeholder: "you@example.com", autocomplete: "email",
+                    class: "w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+              <%= f.password_field :password, required: true, placeholder: "Password (min 6)", autocomplete: "new-password",
+                    class: "w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+              <%= f.password_field :password_confirmation, required: true, placeholder: "Confirm password", autocomplete: "new-password",
+                    class: "w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+            </div>
+          </div>
+
+          <div class="mt-6 flex items-center justify-between">
+            <button type="button" data-join-target="back" data-action="join#back" hidden
+                    class="rounded-lg border border-white/15 px-4 py-2 text-sm text-slate-200 hover:bg-white/10">Back</button>
+            <div class="ml-auto flex gap-2">
+              <button type="button" data-join-target="skip" data-action="join#skip" hidden
+                      class="rounded-lg px-4 py-2 text-sm text-slate-400 hover:text-white">Skip</button>
+              <button type="button" data-join-target="next" data-action="join#next"
+                      class="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400">Next</button>
+              <%= f.submit "Create account & set up", data: { join_target: "submit" }, hidden: true,
+                    class: "rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400 cursor-pointer" %>
+            </div>
+          </div>
+          <p data-join-target="error" class="mt-3 text-sm text-rose-300" hidden>Please choose an option to continue.</p>
+        <% end %>
+      </div>
+
+      <%# ---- Login panel ---- %>
+      <div data-join-target="login" hidden>
+        <h3 class="text-lg font-semibold">Welcome back</h3>
+        <%= form_with url: user_session_path, scope: :user, method: :post, data: { turbo: false }, class: "mt-4 space-y-3" do |f| %>
+          <%= f.email_field :email, required: true, placeholder: "you@example.com", autocomplete: "email",
+                class: "w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+          <%= f.password_field :password, required: true, placeholder: "Password", autocomplete: "current-password",
+                class: "w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+          <label class="flex items-center gap-2 text-sm text-slate-400">
+            <%= f.check_box :remember_me, class: "rounded border-white/20 bg-slate-800" %> Remember me
+          </label>
+          <%= f.submit "Log in", class: "w-full rounded-lg bg-cyan-500 px-4 py-2.5 font-semibold text-slate-950 hover:bg-cyan-400 cursor-pointer" %>
+        <% end %>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .join-card { display:flex; flex-direction:column; gap:.1rem; border:1px solid rgba(255,255,255,.1); border-radius:.75rem; padding:.85rem 1rem; cursor:pointer; }
+  .join-card small { color:#94a3b8; font-size:.8rem; }
+  .join-choice .peer:checked + .join-card { border-color:#22d3ee; background:rgba(34,211,238,.08); box-shadow:0 0 0 1px #22d3ee inset; }
+  .join-choice .peer:focus-visible + .join-card { outline:2px solid #22d3ee; }
+</style>
+
+</div><%# /join controller %>

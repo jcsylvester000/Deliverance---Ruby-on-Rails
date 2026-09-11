@@ -1,0 +1,38 @@
+<%# locals: interviews (Array<Interview>), month (Date), viewer (:poster | :applicant) %>
+<% by_day = interviews.group_by { |i| i.scheduled_at.to_date } %>
+
+<div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+  <div class="mb-3 flex items-center justify-between">
+    <%= link_to "← #{(month << 1).strftime('%b')}", url_for(month: (month << 1).to_s),
+          class: "rounded-md border border-white/15 px-2.5 py-1 text-sm text-slate-300 hover:bg-white/10" %>
+    <h2 class="text-lg font-semibold"><%= month.strftime("%B %Y") %></h2>
+    <%= link_to "#{(month >> 1).strftime('%b')} →", url_for(month: (month >> 1).to_s),
+          class: "rounded-md border border-white/15 px-2.5 py-1 text-sm text-slate-300 hover:bg-white/10" %>
+  </div>
+
+  <div class="grid grid-cols-7 gap-px text-center text-xs text-slate-500">
+    <% %w[Sun Mon Tue Wed Thu Fri Sat].each do |d| %><div class="py-1"><%= d %></div><% end %>
+  </div>
+
+  <div class="mt-1 grid grid-cols-7 gap-px overflow-hidden rounded-lg bg-white/10">
+    <% calendar_weeks(month).each do |week| %>
+      <% week.each do |day| %>
+        <% in_month = day.month == month.month %>
+        <% todays = by_day[day] || [] %>
+        <div class="min-h-[84px] bg-slate-900/60 p-1.5 text-left <%= 'opacity-40' unless in_month %>">
+          <div class="text-[11px] <%= day == Date.current ? 'font-bold text-cyan-300' : 'text-slate-400' %>"><%= day.day %></div>
+          <div class="mt-1 space-y-1">
+            <% todays.first(3).each do |iv| %>
+              <% label = viewer == :poster ? iv.applicant.display_name : iv.job_posting.title %>
+              <% href  = viewer == :poster ? edit_poster_interview_path(iv) : "#interview-#{iv.id}" %>
+              <%= link_to href, class: "block truncate rounded bg-violet-500/20 px-1 py-0.5 text-[10px] text-violet-100 hover:bg-violet-500/30" do %>
+                <%= iv.scheduled_at.strftime("%-l:%M%P") %> <%= label %>
+              <% end %>
+            <% end %>
+            <% if todays.size > 3 %><div class="text-[10px] text-slate-500">+<%= todays.size - 3 %> more</div><% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

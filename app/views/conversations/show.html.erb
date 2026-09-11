@@ -1,0 +1,38 @@
+<% content_for :title, @conversation.title_for(current_user) %>
+
+<div class="mx-auto max-w-2xl">
+  <%= link_to "← Messages", conversations_path, class: "text-sm text-slate-400 hover:text-white" %>
+  <h1 class="mt-1 text-xl font-semibold tracking-tight"><%= @conversation.title_for(current_user) %></h1>
+  <% if @conversation.group? %>
+    <p class="text-sm text-slate-400"><%= @conversation.member_names.join(", ") %></p>
+  <% end %>
+
+  <%= turbo_stream_from @conversation %>
+  <div id="messages" class="mt-4 space-y-2">
+    <%= render @messages %>
+  </div>
+
+  <div class="mt-4">
+    <% if @conversation.open_for?(current_user) %>
+      <%= form_with url: conversation_messages_path(@conversation), method: :post, class: "flex gap-2" do %>
+        <%= text_field_tag :body, "", placeholder: "Write a message…", autocomplete: "off", required: true,
+              class: "flex-1 rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+        <%= submit_tag "Send", class: "rounded-lg bg-cyan-500 px-4 py-2.5 font-semibold text-slate-950 hover:bg-cyan-400 cursor-pointer" %>
+      <% end %>
+    <% elsif @conversation.pending_for?(current_user) %>
+      <div class="rounded-2xl border border-cyan-400/30 bg-cyan-400/[0.06] p-4">
+        <p class="text-sm text-slate-200">This is a message request. Accept to start chatting.</p>
+        <div class="mt-3 flex gap-2">
+          <%= button_to "Accept", accept_conversation_path(@conversation), method: :patch,
+                class: "rounded-md bg-cyan-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-cyan-400" %>
+          <%= button_to "Decline", decline_conversation_path(@conversation), method: :patch,
+                class: "rounded-md border border-white/15 px-4 py-1.5 text-sm text-slate-200 hover:bg-white/10" %>
+          <%= button_to "Block", block_conversation_path(@conversation), method: :patch,
+                class: "rounded-md border border-rose-500/30 px-4 py-1.5 text-sm text-rose-300 hover:bg-rose-500/10" %>
+        </div>
+      </div>
+    <% else %>
+      <p class="text-sm text-slate-500">Waiting for them to accept your request.</p>
+    <% end %>
+  </div>
+</div>

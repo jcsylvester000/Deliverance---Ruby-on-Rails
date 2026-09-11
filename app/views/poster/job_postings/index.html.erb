@@ -1,0 +1,54 @@
+<% content_for :title, "My job postings" %>
+
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <div>
+    <%= link_to "← Dashboard", poster_dashboard_path, class: "text-sm text-slate-400 hover:text-white" %>
+    <h1 class="mt-1 text-2xl font-semibold tracking-tight">Job postings</h1>
+    <p class="mt-1 text-sm text-slate-400">
+      <span class="text-slate-200"><%= @active_count %></span> / <%= JobPosting::MAX_ACTIVE_PER_POSTER %> active
+      <span class="text-slate-500">· closing one frees a slot</span>
+    </p>
+  </div>
+  <% if @active_count < JobPosting::MAX_ACTIVE_PER_POSTER %>
+    <%= link_to "+ New posting", new_poster_job_posting_path,
+          class: "rounded-lg bg-cyan-500 px-4 py-2.5 font-semibold text-slate-950 hover:bg-cyan-400" %>
+  <% else %>
+    <span class="rounded-lg border border-white/15 px-4 py-2.5 text-sm text-slate-500">Cap reached — close one first</span>
+  <% end %>
+</div>
+
+<div class="mt-6 space-y-3">
+  <% if @job_postings.any? %>
+    <% @job_postings.each do |job| %>
+      <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="font-medium text-slate-100"><%= job.title %></span>
+            <% color = { "draft" => "bg-amber-400/10 text-amber-200 border-amber-400/30",
+                          "published" => "bg-emerald-400/10 text-emerald-200 border-emerald-400/30",
+                          "closed" => "bg-slate-500/10 text-slate-400 border-white/15" }[job.status] %>
+            <span class="rounded-full border px-2 py-0.5 text-xs <%= color %>"><%= job.status.titleize %></span>
+          </div>
+          <p class="mt-0.5 text-sm text-slate-400"><%= job.work_arrangement_label %> · <%= job.employment_type_label %> · <%= job.compensation_display %></p>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+          <% if job.published? %>
+            <%= link_to "View", job_path(job), class: "text-slate-300 hover:text-white" %>
+          <% end %>
+          <%= link_to "Edit", edit_poster_job_posting_path(job), class: "rounded-md border border-white/15 px-3 py-1.5 text-slate-200 hover:bg-white/10" %>
+          <% unless job.closed? %>
+            <%= button_to "Close", close_poster_job_posting_path(job), method: :patch,
+                  class: "rounded-md border border-white/15 px-3 py-1.5 text-slate-300 hover:bg-white/10" %>
+          <% end %>
+          <%= button_to "Delete", poster_job_posting_path(job), method: :delete,
+                form: { data: { turbo_confirm: "Delete this posting?" } },
+                class: "rounded-md border border-rose-500/30 px-3 py-1.5 text-rose-300 hover:bg-rose-500/10" %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="rounded-2xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-slate-400">
+      No postings yet. <%= link_to "Create your first one", new_poster_job_posting_path, class: "text-cyan-300 hover:text-cyan-200" %>.
+    </div>
+  <% end %>
+</div>

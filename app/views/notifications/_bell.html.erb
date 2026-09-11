@@ -1,0 +1,7 @@
+<% count = user.notifications.unread.count %>
+<%= link_to notifications_path, id: "notifications-bell", class: "relative text-slate-300 hover:text-white", title: "Notifications" do %>
+  🔔
+  <% if count.positive? %>
+    <span class="absolute -right-2 -top-1 min-w-[18px] rounded-full bg-cyan-500 px-1 text-center text-[10px] font-bold leading-[18px] text-slate-950"><%= count %></span>
+  <% end %>
+<% end %>

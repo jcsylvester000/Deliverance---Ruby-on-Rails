@@ -1,0 +1,49 @@
+<% new_record = @interview.new_record? %>
+<%= form_with model: [:poster, @interview],
+      url: (new_record ? poster_interviews_path(application_id: @application.id) : poster_interview_path(@interview)),
+      data: { turbo: false }, class: "space-y-4" do |f| %>
+  <% if @interview.errors.any? %>
+    <div class="rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-200">
+      <ul class="list-disc pl-5"><% @interview.errors.full_messages.each do |m| %><li><%= m %></li><% end %></ul>
+    </div>
+  <% end %>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div>
+      <%= f.label :scheduled_at, "Date & time", class: "block text-sm text-slate-300" %>
+      <%= f.datetime_local_field :scheduled_at, required: true,
+            class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+    </div>
+    <div>
+      <%= f.label :duration_minutes, "Duration (min)", class: "block text-sm text-slate-300" %>
+      <%= f.number_field :duration_minutes, min: 5, step: 5,
+            class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+    </div>
+    <div>
+      <%= f.label :mode, class: "block text-sm text-slate-300" %>
+      <%= f.select :mode, Interview.modes.keys.map { |k| [k.humanize.titleize, k] }, {},
+            class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+    </div>
+    <div>
+      <%= f.label :meeting_link, "Meeting link (online)", class: "block text-sm text-slate-300" %>
+      <%= f.url_field :meeting_link, placeholder: "https://…",
+            class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+    </div>
+    <div class="sm:col-span-2">
+      <%= f.label :location, "Location (on-site)", class: "block text-sm text-slate-300" %>
+      <%= f.text_field :location, placeholder: "optional",
+            class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+    </div>
+    <div class="sm:col-span-2">
+      <%= f.label :notes, "Notes for the applicant", class: "block text-sm text-slate-300" %>
+      <%= f.text_area :notes, rows: 3, placeholder: "Agenda, what to bring, who they'll meet…",
+            class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-2 pt-2">
+    <%= f.submit (new_record ? "Schedule interview" : "Save changes"),
+          class: "rounded-lg bg-cyan-500 px-5 py-2.5 font-semibold text-slate-950 hover:bg-cyan-400 cursor-pointer" %>
+    <%= link_to "Cancel", poster_interviews_path, class: "rounded-lg border border-white/15 px-4 py-2.5 text-sm text-slate-300 hover:bg-white/10" %>
+  </div>
+<% end %>

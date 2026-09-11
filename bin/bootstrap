@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Deliverance — Phase 0 bootstrap.
+# Generates a Rails 8.1.3 app (module: Deliverance), layers in the Deliverance stack,
+# prepares the databases on the local Docker Postgres, and runs the green health spec.
+# Idempotent: safe to re-run. Invoke with:  docker compose run --rm web bash bin/bootstrap
+set -euo pipefail
+
+APP=/app
+cd "$APP"
+
+if [ ! -f config/application.rb ]; then
+  echo ">> Generating Rails 8.1.3 app (module: Deliverance)..."
+  rm -rf /tmp/deliverance
+  rails new /tmp/deliverance \
+    --database=postgresql \
+    --css=tailwind \
+    --skip-test \
+    --skip-kamal \
+    --skip-solid
+  rm -rf /tmp/deliverance/.git
+  cp -a /tmp/deliverance/. "$APP"/
+fi
+
+echo ">> Ensuring the Deliverance gem stack..."
+if ! grep -q 'gem "devise"' Gemfile; then
+cat >> Gemfile <<'RUBY'
+
+# --- Deliverance stack (Phase 0) ---
+gem "devise"          # authentication
+gem "pundit"          # authorization
+gem "view_component"  # component-based views
+
+group :development, :test do
+  gem "rspec-rails"        # test framework
+  gem "factory_bot_rails"  # test data
+end
+RUBY
+fi
+
+bundle install
+
+echo ">> Applying Deliverance database.yml (local Docker Postgres; Neon for production)..."
+cp setup/database.yml config/database.yml
+
+echo ">> Running installers (idempotent)..."
+[ -f .rspec ]                                 || bin/rails generate rspec:install
+[ -f config/initializers/devise.rb ]          || bin/rails generate devise:install
+[ -f app/policies/application_policy.rb ]     || bin/rails generate pundit:install
+
+echo ">> Adding the Phase 0 health spec..."
+mkdir -p spec/requests
+cp setup/health_check_spec.rb spec/requests/health_check_spec.rb
+
+echo ">> Making sure .env is git-ignored..."
+touch .gitignore
+grep -qx ".env" .gitignore || printf "\n# Local secrets — never commit\n.env\n" >> .gitignore
+
+echo ">> Waiting for Postgres to accept connections..."
+until pg_isready -h "${DB_HOST:-db}" -p "${DB_PORT:-5432}" -U "${DB_USER:-postgres}" >/dev/null 2>&1; do
+  sleep 1
+done
+
+echo ">> Preparing databases (development + test; test is never seeded)..."
+bin/rails db:prepare
+RAILS_ENV=test bin/rails db:prepare
+
+echo ">> Running the suite..."
+bundle exec rspec
+
+echo ""
+echo "=============================================================="
+echo " Phase 0 complete. Start the app with:   docker compose up"
+echo " Then open:  http://localhost:3002        (Rails welcome / /up)"
+echo "=============================================================="

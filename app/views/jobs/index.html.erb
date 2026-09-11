@@ -1,0 +1,42 @@
+<% content_for :title, "Browse jobs — Deliverance" %>
+
+<div class="flex items-center justify-between">
+  <div>
+    <h1 class="text-2xl font-semibold tracking-tight">Open roles</h1>
+    <p class="mt-1 text-sm text-slate-400">Browse freely — you register when you're ready to apply.</p>
+  </div>
+  <%= link_to "← Home", root_path, class: "text-sm text-slate-400 hover:text-white" %>
+</div>
+
+<%= form_with url: jobs_path, method: :get, data: { turbo: false }, class: "mt-6 grid gap-3 sm:grid-cols-4" do %>
+  <input type="text" name="q" value="<%= @q %>" placeholder="Search title, description, location…"
+         class="sm:col-span-2 rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100 placeholder:text-slate-500">
+  <select name="arrangement" class="rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100">
+    <option value="">Any arrangement</option>
+    <% JobPosting.work_arrangements.each_key do |k| %>
+      <option value="<%= k %>" <%= "selected" if @arrangement == k %>><%= k.humanize.titleize %></option>
+    <% end %>
+  </select>
+  <select name="employment_type" class="rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100">
+    <option value="">Any type</option>
+    <% JobPosting.employment_types.each_key do |k| %>
+      <option value="<%= k %>" <%= "selected" if @employment_type == k %>><%= k.humanize.titleize %></option>
+    <% end %>
+  </select>
+  <div class="sm:col-span-4 flex gap-2">
+    <button type="submit" class="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400">Filter</button>
+    <%= link_to "Clear", jobs_path, class: "rounded-lg border border-white/15 px-4 py-2 text-sm text-slate-300 hover:bg-white/10" %>
+  </div>
+<% end %>
+
+<div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <% if @jobs.any? %>
+    <% @jobs.each do |job| %>
+      <%= render "jobs/job_card", job: job %>
+    <% end %>
+  <% else %>
+    <div class="col-span-full rounded-2xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-slate-400">
+      No roles match yet. Try clearing the filters.
+    </div>
+  <% end %>
+</div>

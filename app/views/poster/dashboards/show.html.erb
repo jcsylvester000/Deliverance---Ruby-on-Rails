@@ -1,0 +1,42 @@
+<% content_for :title, "Job Poster Dashboard" %>
+<% active_posts = current_user.job_postings.where(status: JobPosting::ACTIVE_STATUSES).count %>
+<% published = current_user.job_postings.published.count %>
+<% pipeline = current_user.received_applications.active.count %>
+<% upcoming = current_user.hosted_interviews.upcoming.count %>
+
+<div class="flex items-center justify-between">
+  <div>
+    <p class="text-sm text-cyan-300">Job Poster</p>
+    <h1 class="text-2xl font-semibold tracking-tight">Welcome, <%= current_user.display_name %></h1>
+    <p class="mt-1 text-sm text-slate-400"><%= current_user.organization_type.to_s.humanize %></p>
+  </div>
+  <%= link_to "Manage postings →", poster_job_postings_path,
+        class: "rounded-lg bg-cyan-500 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-400" %>
+</div>
+
+<div class="mt-8 grid gap-4 sm:grid-cols-3">
+  <%= link_to poster_job_postings_path, class: "rounded-2xl border border-white/10 bg-white/5 p-5 hover:border-cyan-400/40" do %>
+    <p class="text-sm text-slate-400">Active postings</p>
+    <p class="mt-1 text-3xl font-semibold"><%= active_posts %> <span class="text-base text-slate-500">/ <%= JobPosting::MAX_ACTIVE_PER_POSTER %></span></p>
+    <p class="mt-1 text-xs text-slate-500"><%= published %> published</p>
+  <% end %>
+  <%= link_to poster_applications_path, class: "rounded-2xl border border-white/10 bg-white/5 p-5 hover:border-cyan-400/40" do %>
+    <p class="text-sm text-slate-400">Applicants in pipeline</p>
+    <p class="mt-1 text-3xl font-semibold"><%= pipeline %></p>
+    <p class="mt-1 text-xs text-slate-500">open the pipeline →</p>
+  <% end %>
+  <%= link_to poster_interviews_path, class: "rounded-2xl border border-white/10 bg-white/5 p-5 hover:border-cyan-400/40" do %>
+    <p class="text-sm text-slate-400">Upcoming interviews</p>
+    <p class="mt-1 text-3xl font-semibold"><%= upcoming %></p>
+    <p class="mt-1 text-xs text-slate-500">open the calendar →</p>
+  <% end %>
+</div>
+
+<div class="mt-6 flex flex-wrap gap-3">
+  <%= link_to "+ Create a job posting", new_poster_job_posting_path,
+        class: "rounded-lg border border-white/15 px-4 py-2.5 text-slate-200 hover:bg-white/10" %>
+  <%= link_to "Applicant pipeline", poster_applications_path,
+        class: "rounded-lg border border-white/15 px-4 py-2.5 text-slate-200 hover:bg-white/10" %>
+  <%= link_to "Interview calendar", poster_interviews_path,
+        class: "rounded-lg border border-white/15 px-4 py-2.5 text-slate-200 hover:bg-white/10" %>
+</div>

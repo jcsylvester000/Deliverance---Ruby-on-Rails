@@ -1,0 +1,9 @@
+{
+  "name": "deliverance-uploads",
+  "private": true,
+  "type": "module",
+  "description": "Server-side UploadThing helper invoked by Rails (bin/uploadthing_upload.mjs).",
+  "dependencies": {
+    "uploadthing": "^7.0.0"
+  }
+}

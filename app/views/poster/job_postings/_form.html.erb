@@ -1,0 +1,64 @@
+<%= form_with model: [:poster, @job_posting], data: { turbo: false }, class: "space-y-4" do |f| %>
+  <% if @job_posting.errors.any? %>
+    <div class="rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-200">
+      <p class="font-medium">Please fix the following:</p>
+      <ul class="mt-1 list-disc pl-5">
+        <% @job_posting.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :title, class: "block text-sm text-slate-300" %>
+    <%= f.text_field :title, required: true,
+          class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+  </div>
+
+  <div>
+    <%= f.label :description, class: "block text-sm text-slate-300" %>
+    <%= f.text_area :description, rows: 6, required: true,
+          class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div>
+      <%= f.label :location, class: "block text-sm text-slate-300" %>
+      <%= f.text_field :location, placeholder: "e.g. Manila, or Remote",
+            class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+    </div>
+    <div>
+      <%= f.label :work_arrangement, "Work arrangement", class: "block text-sm text-slate-300" %>
+      <%= f.select :work_arrangement,
+            JobPosting.work_arrangements.keys.map { |k| [k.humanize.titleize, k] },
+            {}, class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+    </div>
+    <div>
+      <%= f.label :employment_type, "Employment type", class: "block text-sm text-slate-300" %>
+      <%= f.select :employment_type,
+            JobPosting.employment_types.keys.map { |k| [k.humanize.titleize, k] },
+            {}, class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+    </div>
+    <div>
+      <%= f.label :status, class: "block text-sm text-slate-300" %>
+      <%= f.select :status,
+            [["Draft (hidden)", "draft"], ["Published (public)", "published"]],
+            {}, class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+    </div>
+    <div>
+      <%= f.label :compensation_dollars, "Compensation ($)", class: "block text-sm text-slate-300" %>
+      <%= f.number_field :compensation_dollars, step: 0.01, min: 0, placeholder: "optional",
+            class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+    </div>
+    <div>
+      <%= f.label :compensation_period, "Per", class: "block text-sm text-slate-300" %>
+      <%= f.select :compensation_period,
+            [["—", ""], ["Hour", "hourly"], ["Month", "monthly"], ["Fixed / project", "fixed"]],
+            {}, class: "mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-slate-100" %>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-2 pt-2">
+    <%= f.submit class: "rounded-lg bg-cyan-500 px-5 py-2.5 font-semibold text-slate-950 hover:bg-cyan-400 cursor-pointer" %>
+    <%= link_to "Cancel", poster_job_postings_path, class: "rounded-lg border border-white/15 px-4 py-2.5 text-sm text-slate-300 hover:bg-white/10" %>
+  </div>
+<% end %>

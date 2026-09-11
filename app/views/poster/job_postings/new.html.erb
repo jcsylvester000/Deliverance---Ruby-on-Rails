@@ -1,0 +1,9 @@
+<% content_for :title, "New job posting" %>
+
+<div class="mx-auto max-w-2xl">
+  <%= link_to "← My postings", poster_job_postings_path, class: "text-sm text-slate-400 hover:text-white" %>
+  <h1 class="mt-1 text-2xl font-semibold tracking-tight">New job posting</h1>
+  <p class="mt-1 text-sm text-slate-400">Save as a draft to keep it private, or publish it straight to the board.</p>
+
+  <div class="mt-6"><%= render "form" %></div>
+</div>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html class="h-full">
+  <head>
+    <title><%= content_for(:title) || "Deliverance — We can Deliver" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚚</text></svg>">
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="h-full bg-slate-950 text-slate-100 antialiased">
+    <header class="border-b border-white/10 bg-slate-950/80 backdrop-blur">
+      <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <%= link_to root_path, class: "flex items-center gap-2 font-semibold tracking-tight" do %>
+          <span class="text-xl">🚚</span>
+          <span class="text-lg">Deliverance</span>
+        <% end %>
+
+        <div class="flex items-center gap-3 text-sm">
+          <% if user_signed_in? %>
+            <%= link_to "Dashboard", dashboard_path_for(current_user), class: "text-slate-300 hover:text-white" %>
+            <%= link_to "Calendar", (current_user.job_poster? ? poster_interviews_path : applicant_interviews_path), class: "hidden text-slate-300 hover:text-white sm:inline" %>
+            <% unread_msgs = current_user.unread_conversations_count %>
+            <%= link_to conversations_path, class: "relative text-slate-300 hover:text-white", title: "Messages" do %>
+              💬
+              <% if unread_msgs.positive? %>
+                <span class="absolute -right-2 -top-1 min-w-[18px] rounded-full bg-cyan-500 px-1 text-center text-[10px] font-bold leading-[18px] text-slate-950"><%= unread_msgs %></span>
+              <% end %>
+            <% end %>
+            <%= turbo_stream_from [current_user, :notifications] %>
+            <%= render "notifications/bell", user: current_user %>
+            <span class="hidden text-slate-500 sm:inline"><%= current_user.display_name %></span>
+            <%= button_to "Sign out", destroy_user_session_path, method: :delete,
+                  class: "rounded-md border border-white/15 px-3 py-1.5 text-slate-200 hover:bg-white/10" %>
+          <% else %>
+            <%= link_to "Log in", new_user_session_path, class: "text-slate-300 hover:text-white" %>
+            <%= link_to "Become a Member", root_path(anchor: "join"),
+                  class: "rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400" %>
+          <% end %>
+        </div>
+      </nav>
+    </header>
+
+    <% if notice.present? %>
+      <div class="mx-auto mt-4 max-w-6xl px-4"><div class="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-200"><%= notice %></div></div>
+    <% end %>
+    <% if alert.present? %>
+      <div class="mx-auto mt-4 max-w-6xl px-4"><div class="rounded-md border border-rose-500/30 bg-rose-500/10 px-4 py-2 text-sm text-rose-200"><%= alert %></div></div>
+    <% end %>
+
+    <main class="mx-auto max-w-6xl px-4 py-8">
+      <%= yield %>
+    </main>
+
+    <footer class="mt-16 border-t border-white/10 py-8 text-center text-xs text-slate-500">
+      Deliverance · Looking for a Job, We can Deliver
+    </footer>
+  </body>
+</html>

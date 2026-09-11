@@ -1,0 +1,44 @@
+# Deliverance — local development stack.
+# Uses Dockerfile.dev so a rebuild never picks up the production ./Dockerfile (which Render uses).
+# Host ports 3002 (web) and 5436 (db) so this runs beside your other projects.
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: postgres
+    ports:
+      - "5436:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env
+    command: bash -lc "rm -f tmp/pids/server.pid && ([ -d node_modules/uploadthing ] || npm install) && bin/rails tailwindcss:build && exec bin/rails server -b 0.0.0.0 -p 3000"
+    ports:
+      - "3002:3000"
+    volumes:
+      - .:/app
+      - bundle:/usr/local/bundle
+      - node_modules:/app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+volumes:
+  pgdata:
+  bundle:
+  node_modules:

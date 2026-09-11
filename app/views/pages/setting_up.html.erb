@@ -1,0 +1,31 @@
+<% content_for :title, "Setting up your dashboard…" %>
+
+<div data-controller="hud" data-hud-url-value="<%= @destination %>"
+     class="relative mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center text-center">
+
+  <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-3xl">
+    <div class="absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/10 blur-3xl"></div>
+  </div>
+
+  <div class="relative mb-8 grid h-32 w-32 place-items-center">
+    <div class="absolute inset-0 animate-spin rounded-full border-2 border-cyan-400/30 border-t-cyan-400" style="animation-duration:1.6s"></div>
+    <div class="absolute inset-3 animate-spin rounded-full border-2 border-indigo-400/20 border-b-indigo-400" style="animation-duration:2.4s;animation-direction:reverse"></div>
+    <span class="text-3xl">🚚</span>
+  </div>
+
+  <h1 class="text-2xl font-semibold tracking-tight">Setting up your dashboard</h1>
+  <p data-hud-target="status" class="mt-2 h-5 font-mono text-sm text-cyan-300">Initializing…</p>
+
+  <div class="mt-6 w-full max-w-sm">
+    <div class="h-2 w-full overflow-hidden rounded-full bg-slate-800">
+      <div data-hud-target="bar" class="h-full w-0 rounded-full bg-gradient-to-r from-cyan-400 to-indigo-400 transition-[width] duration-300 ease-out"></div>
+    </div>
+    <p data-hud-target="percent" class="mt-2 font-mono text-xs text-slate-500">0%</p>
+  </div>
+
+  <noscript>
+    <p class="mt-6 text-sm text-slate-400">
+      <%= link_to "Continue to your dashboard →", @destination, class: "text-cyan-300 underline" %>
+    </p>
+  </noscript>
+</div>

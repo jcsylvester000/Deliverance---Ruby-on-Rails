@@ -1,0 +1,52 @@
+<% content_for :title, "Applicant pipeline" %>
+
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <div>
+    <%= link_to "← Dashboard", poster_dashboard_path, class: "text-sm text-slate-400 hover:text-white" %>
+    <h1 class="mt-1 text-2xl font-semibold tracking-tight">Applicant pipeline</h1>
+    <p class="mt-1 text-sm text-slate-400">Qualify inbound applicants and move them forward, or reject.</p>
+  </div>
+</div>
+
+<div class="mt-5 flex flex-wrap gap-2 text-sm">
+  <%= link_to "All", poster_applications_path,
+        class: "rounded-full border px-3 py-1 #{@stage ? 'border-white/15 text-slate-300 hover:bg-white/10' : 'border-cyan-400/40 bg-cyan-400/10 text-cyan-200'}" %>
+  <% Application.stages.each_key do |k| %>
+    <%= link_to "#{k.humanize.titleize} (#{@counts[k].to_i})", poster_applications_path(stage: k),
+          class: "rounded-full border px-3 py-1 #{@stage == k ? 'border-cyan-400/40 bg-cyan-400/10 text-cyan-200' : 'border-white/15 text-slate-300 hover:bg-white/10'}" %>
+  <% end %>
+</div>
+
+<div class="mt-6 space-y-3">
+  <% if @applications.any? %>
+    <% @applications.each do |app| %>
+      <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="font-medium text-slate-100"><%= app.applicant.display_name %></span>
+            <%= stage_badge(app) %>
+          </div>
+          <p class="mt-0.5 text-sm text-slate-400">
+            <%= app.job_posting.title %> · applied <%= app.created_at.to_date.to_fs(:long) %>
+          </p>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+          <%= link_to "Review", poster_application_path(app), class: "rounded-md border border-white/15 px-3 py-1.5 text-slate-200 hover:bg-white/10" %>
+          <% unless app.closed? %>
+            <% if app.advanceable? %>
+              <%= button_to "Advance", advance_poster_application_path(app), method: :patch,
+                    class: "rounded-md bg-cyan-500 px-3 py-1.5 font-medium text-slate-950 hover:bg-cyan-400" %>
+            <% end %>
+            <%= button_to "Reject", reject_poster_application_path(app), method: :patch,
+                  form: { data: { turbo_confirm: "Reject this applicant?" } },
+                  class: "rounded-md border border-rose-500/30 px-3 py-1.5 text-rose-300 hover:bg-rose-500/10" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="rounded-2xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-slate-400">
+      No applicants yet<%= @stage ? " at this stage" : "" %>. Publish a role and they'll show up here.
+    </div>
+  <% end %>
+</div>

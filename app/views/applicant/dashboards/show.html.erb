@@ -1,0 +1,52 @@
+<% content_for :title, "Applicant Dashboard" %>
+<% active = current_user.applications.active.count %>
+<% upcoming = current_user.attending_interviews.upcoming.count %>
+<% offers = current_user.applications.where(stage: [:offer, :onboarding, :hired]).count %>
+
+<div class="flex items-center justify-between">
+  <div>
+    <p class="text-sm text-cyan-300">Applicant</p>
+    <h1 class="text-2xl font-semibold tracking-tight">Welcome, <%= current_user.display_name %></h1>
+    <p class="mt-1 text-sm text-slate-400"><%= current_user.organization_type.to_s.humanize %></p>
+  </div>
+  <%= link_to "Browse jobs →", jobs_path,
+        class: "rounded-lg bg-cyan-500 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-400" %>
+</div>
+
+<% onboarding_app = current_user.applications.detect(&:onboarding_active?) %>
+<% if onboarding_app %>
+  <div class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+    <div>
+      <p class="font-medium text-emerald-100">🎉 You're onboarding for <%= onboarding_app.job_posting.title %></p>
+      <p class="text-sm text-emerald-200/80">Upload the basics to keep things moving.</p>
+    </div>
+    <%= link_to "Start onboarding →", onboarding_applicant_application_path(onboarding_app),
+          class: "rounded-lg bg-emerald-500 px-4 py-2 font-semibold text-slate-950 hover:bg-emerald-400" %>
+  </div>
+<% end %>
+
+<div class="mt-8 grid gap-4 sm:grid-cols-3">
+  <%= link_to applicant_applications_path, class: "rounded-2xl border border-white/10 bg-white/5 p-5 hover:border-cyan-400/40" do %>
+    <p class="text-sm text-slate-400">Active applications</p>
+    <p class="mt-1 text-3xl font-semibold"><%= active %> <span class="text-base text-slate-500">/ <%= Application::MAX_ACTIVE_PER_APPLICANT %></span></p>
+    <p class="mt-1 text-xs text-slate-500">open your tracker →</p>
+  <% end %>
+  <%= link_to applicant_interviews_path, class: "rounded-2xl border border-white/10 bg-white/5 p-5 hover:border-cyan-400/40" do %>
+    <p class="text-sm text-slate-400">Upcoming interviews</p>
+    <p class="mt-1 text-3xl font-semibold"><%= upcoming %></p>
+    <p class="mt-1 text-xs text-slate-500">open the calendar →</p>
+  <% end %>
+  <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+    <p class="text-sm text-slate-400">Offers &amp; beyond</p>
+    <p class="mt-1 text-3xl font-semibold"><%= offers %></p>
+  </div>
+</div>
+
+<div class="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
+  <p class="text-slate-200">Line up roles, track applications, and see your interviews in one place.</p>
+  <div class="mt-3 flex flex-wrap justify-center gap-3">
+    <%= link_to "Browse the board", jobs_path, class: "rounded-lg bg-cyan-500 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-400" %>
+    <%= link_to "My applications", applicant_applications_path, class: "rounded-lg border border-white/15 px-4 py-2 text-slate-200 hover:bg-white/10" %>
+    <%= link_to "My interviews", applicant_interviews_path, class: "rounded-lg border border-white/15 px-4 py-2 text-slate-200 hover:bg-white/10" %>
+  </div>
+</div>
